@@ -12,7 +12,7 @@
     tools:context="com.catchapp.nikitagamolsky.capstone_project_catch.TaskManagerActivity"
     tools:showIn="@layout/app_bar_task_manager">
 
-    <TextView
+    <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello World!" />

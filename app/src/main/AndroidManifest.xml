@@ -18,9 +18,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <provider
-            android:authorities="com.catchapp.nikitagamolsky.capstone_project_catch"
-            android:name=".data.TaskProvider" />
+            android:name=".data.TaskProvider"
+            android:authorities="com.catchapp.nikitagamolsky.capstone_project_catch" />
+
+        <activity android:name=".InputTaskActivity"></activity>
     </application>
 
 </manifest>

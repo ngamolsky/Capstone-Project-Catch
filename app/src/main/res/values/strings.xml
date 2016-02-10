@@ -1,8 +1,12 @@
 <resources>
-    <string name="app_name">Capstone_Project_Catch</string>
+    <string name="app_name">Catch!</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="add_task">Add Task</string>
+    <string name="task_hint">Enter a task to be completed</string>
+    <string name="task">Task</string>
+    <string name="balloon_description">Image representing an individual task</string>
 </resources>
