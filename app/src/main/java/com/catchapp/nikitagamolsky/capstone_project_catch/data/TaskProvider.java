@@ -59,9 +59,7 @@ public class TaskProvider extends ContentProvider {
         // and query the database accordingly.
         Cursor retCursor;
         switch (sUriMatcher.match(uri)) {
-            // "weather/*/*"
 
-            // "weather"
             case TASK: {
                 retCursor = mOpenHelper.getReadableDatabase().query(TaskContract.TaskEntry.TABLE_NAME,
                         projection,
@@ -72,7 +70,7 @@ public class TaskProvider extends ContentProvider {
                         sortOrder);
                 break;
             }
-            // "location"
+
 
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

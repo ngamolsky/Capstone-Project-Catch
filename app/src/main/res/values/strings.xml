@@ -9,4 +9,5 @@
     <string name="task_hint">Enter a task to be completed</string>
     <string name="task">Task</string>
     <string name="balloon_description">Image representing an individual task</string>
+    <string name="save">Save</string>
 </resources>
