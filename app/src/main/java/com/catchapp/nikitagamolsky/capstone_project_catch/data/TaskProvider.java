@@ -15,12 +15,14 @@ public class TaskProvider extends ContentProvider {
     private TaskDBHelper mOpenHelper;
 
     static final int TASK = 100;
+    static final int CATEGORY = 101;
 
     static UriMatcher buildUriMatcher() {
 
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = TaskContract.CONTENT_AUTHORITY;
         matcher.addURI(authority, TaskContract.PATH_TASKS, TASK);
+        matcher.addURI(authority, TaskContract.PATH_CATEGORIES, CATEGORY);
         return matcher;
     }
 
@@ -47,6 +49,8 @@ public class TaskProvider extends ContentProvider {
             case TASK:
                 return TaskContract.TaskEntry.CONTENT_TYPE;
 
+            case CATEGORY:
+                return TaskContract.CategoryEntry.CONTENT_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -62,6 +66,16 @@ public class TaskProvider extends ContentProvider {
 
             case TASK: {
                 retCursor = mOpenHelper.getReadableDatabase().query(TaskContract.TaskEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            }
+            case CATEGORY: {
+                retCursor = mOpenHelper.getReadableDatabase().query(TaskContract.CategoryEntry.TABLE_NAME,
                         projection,
                         selection,
                         selectionArgs,
@@ -97,6 +111,15 @@ public class TaskProvider extends ContentProvider {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
             }
+
+            case CATEGORY: {
+                long _id = db.insert(TaskContract.CategoryEntry.TABLE_NAME, null, values);
+                if ( _id > 0 )
+                    returnUri = TaskContract.CategoryEntry.buildTaskUri(_id);
+                else
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                break;
+            }
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -114,6 +137,11 @@ public class TaskProvider extends ContentProvider {
             case TASK:
                 rowsDeleted = db.delete(
                         TaskContract.TaskEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+
+            case CATEGORY:
+                rowsDeleted = db.delete(
+                        TaskContract.CategoryEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

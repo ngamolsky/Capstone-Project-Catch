@@ -33,14 +33,16 @@
         android:layout_marginTop="40dp"
         android:textIsSelectable="true" />
 
-    <Spinner
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/categorySelect"
-        android:layout_below="@+id/inputTask"
-        android:layout_alignLeft="@+id/inputTask"
+        android:text="Select Category"
+        android:layout_marginTop="40dp"
         android:layout_alignStart="@+id/inputTask"
-        android:layout_marginTop="68dp" />
+        android:layout_alignLeft="@+id/inputTask"
+        android:layout_below="@+id/inputTask"
+        android:onClick="selectCategory"/>
 
     <SeekBar
         android:layout_width="match_parent"
@@ -62,5 +64,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="60dp"
         android:onClick="saveTask"/>
+
+
 
 </RelativeLayout>
