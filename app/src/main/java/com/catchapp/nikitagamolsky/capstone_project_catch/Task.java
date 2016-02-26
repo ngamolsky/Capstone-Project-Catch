@@ -2,29 +2,31 @@ package com.catchapp.nikitagamolsky.capstone_project_catch;
 
 
 import android.content.ContentValues;
+import android.content.Context;
 
 import com.catchapp.nikitagamolsky.capstone_project_catch.data.TaskContract;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
-public class Task  implements Serializable{
+public class Task  {
     private String title;
     private ArrayList<String> categories;
     private int priority;
+    private Date dateEntered;
+
+
     public Task() {
     }
 
-    public Task(String title, ArrayList<String> categories,int priority) {
+    public Task(String title, ArrayList<String> categories,int priority, Date dateEntered) {
         this.title = title;
         this.categories = categories;
         this.priority = priority;
+        this.dateEntered = dateEntered;
     }
+
 
     public String getTitle() {
         return title;
@@ -50,25 +52,27 @@ public class Task  implements Serializable{
         this.priority = priority;
     }
 
-    public String serializeCategories(ArrayList<String> categories) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        new ObjectOutputStream(out).writeObject(categories);
-        byte[] data = out.toByteArray();
-        out.close();
-        return new String(data);
-    }
 
-    public ArrayList<String> deserializeCategories(String encodedCategories) throws IOException, ClassNotFoundException {
-        ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(encodedCategories.getBytes()));
-        ArrayList<String> categories = (ArrayList<String>)in.readObject();
-        in.close();
-        return categories;
-    }
 
-    public void saveTask() throws IOException {
+
+    public void save(Context context){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         ContentValues values = new ContentValues();
-        values.put(TaskContract.TaskEntry.COLUMN_TASK_NAME,title);
-        values.put(TaskContract.TaskEntry.COLUMN_TASK_CATEGORY,serializeCategories(categories));
-        values.put(TaskContract.TaskEntry.COLUMN_PRIORITY,"" + priority;
+        values.put(TaskContract.TaskEntry.COLUMN_TASK_NAME,this.title);
+        values.put(TaskContract.TaskEntry.COLUMN_TASK_CATEGORY, this.categories.toString());
+        values.put(TaskContract.TaskEntry.COLUMN_PRIORITY, "" + this.priority);
+        values.put(TaskContract.TaskEntry.COLUMN_DATE_ENTERED, new Date().toString());
+        context.getContentResolver().insert(TaskContract.TaskEntry.CONTENT_URI, values);
+
+    }
+
+    @Override
+    public String toString() {
+
+        return title;
+    }
+
+    public void updatePosition(Context context){
+
     }
 }

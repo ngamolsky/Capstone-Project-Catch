@@ -23,20 +23,12 @@
             android:name=".data.TaskProvider"
             android:authorities="com.catchapp.nikitagamolsky.capstone_project_catch" />
 
-        <activity android:name=".InputTaskActivity" />
+        <activity android:name=".InputTaskActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan"/>
         <activity
             android:name=".AndroidDatabaseManager"
             android:theme="@style/Theme.AppCompat.Light" />
-        <activity
-            android:name=".PickCategoryDialog"
-            android:label="Pick or Add Your Categories"
-            android:theme="@style/AppTheme.Dialog"
-            />
-        <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
-             App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class TaskDBHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 8;
     private static final String TEXT_TYPE = " TEXT";
     private static final String COMMA_SEP = ",";
 
@@ -83,7 +83,8 @@ public class TaskDBHelper extends SQLiteOpenHelper {
                 TaskEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 TaskEntry.COLUMN_TASK_NAME + TEXT_TYPE + COMMA_SEP +
                 TaskEntry.COLUMN_TASK_CATEGORY + TEXT_TYPE + COMMA_SEP +
-                TaskEntry.COLUMN_PRIORITY  +  TEXT_TYPE+ " )" ;
+                TaskEntry.COLUMN_PRIORITY  +  TEXT_TYPE+ COMMA_SEP +
+                TaskEntry.COLUMN_DATE_ENTERED  +  TEXT_TYPE + " )" ;
 
         final String SQL_CREATE_CATEGORY_TABLE = "CREATE TABLE " + CategoryEntry.TABLE_NAME + " (" +
                 CategoryEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +

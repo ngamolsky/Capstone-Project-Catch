@@ -37,6 +37,7 @@ public class TaskContract {
         public static final String COLUMN_TASK_NAME = "title"; //Name of the Task
         public static final String COLUMN_TASK_CATEGORY = "category"; // Category of the Task
         public static final String COLUMN_PRIORITY = "priority"; // Importance of the Task, Set in the Priority Matrix
+        public static final String COLUMN_DATE_ENTERED = "date";
     }
 
         public static final class  CategoryEntry implements BaseColumns{

@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="horizontal" android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:orientation="horizontal" android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:id="@+id/categoryLayout"
-        android:descendantFocusability="blocksDescendants">
+        android:descendantFocusability="blocksDescendants"
+        android:background="@drawable/rounded_corners"
+        android:layout_margin="5dp"
+        android:gravity="center"
+        >
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/categoryText"
-        android:textAppearance="?textAppearanceListItem"
-        android:textSize="16sp"
-        android:layout_marginStart="@dimen/text_margin"
-        android:layout_marginLeft="@dimen/text_margin" />
-    <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/categoryCheckBox"
-        android:checked="false"/>
+        android:textSize="20sp"
+        android:textAppearance="?listPreferredItemHeight"
+        android:padding="5dp"
+        android:gravity="center"
+        android:lines="1"
+        />
     </LinearLayout>
 
 

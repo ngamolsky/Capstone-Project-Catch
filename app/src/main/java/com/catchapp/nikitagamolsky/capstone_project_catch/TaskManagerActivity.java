@@ -1,6 +1,11 @@
 package com.catchapp.nikitagamolsky.capstone_project_catch;
 
+import android.app.LoaderManager;
+import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -15,14 +20,25 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.catchapp.nikitagamolsky.capstone_project_catch.data.CategoryAdapter;
+import com.catchapp.nikitagamolsky.capstone_project_catch.data.DividerItemDecoration;
 import com.catchapp.nikitagamolsky.capstone_project_catch.data.TaskAdapter;
+import com.catchapp.nikitagamolsky.capstone_project_catch.data.TaskContract;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 
 public class TaskManagerActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor>{
     private RecyclerView mRecyclerView;
-    private TaskAdapter mAdapter;
+    private TaskAdapter mTaskAdapter;
+    private CategoryAdapter mCategoryAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private static final int FORECAST_LOADER = 0;
+    private Context mContext;
+    private ArrayList<String> allCategories;
+    private ArrayList<Task> allTasks;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,12 +46,16 @@ public class TaskManagerActivity extends AppCompatActivity
         setContentView(R.layout.activity_task_manager);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        mContext = this;
+        getLoaderManager().initLoader(0,null,this);
+        getLoaderManager().initLoader(1, null, this);
+        allCategories = new ArrayList<>();
+        allTasks = new ArrayList<>();
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(),InputTaskActivity.class));
+                startActivity(new Intent(getApplicationContext(), InputTaskActivity.class));
             }
         });
 
@@ -50,14 +70,12 @@ public class TaskManagerActivity extends AppCompatActivity
 
         mRecyclerView = (RecyclerView) findViewById(R.id.taskList);
 
-
-        mRecyclerView.setHasFixedSize(true);
-        mAdapter = new TaskAdapter(getApplicationContext(),null,0);
-
-        mLayoutManager = new LinearLayoutManager(this);
+        mCategoryAdapter = new CategoryAdapter(null,mContext);
+        mTaskAdapter = new TaskAdapter(mContext,allCategories,allTasks);
+        mLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
         mRecyclerView.setLayoutManager(mLayoutManager);
-
-
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(mContext,DividerItemDecoration.HORIZONTAL_LIST));
+        mRecyclerView.setAdapter(mTaskAdapter);
 
     }
 
@@ -110,5 +128,45 @@ public class TaskManagerActivity extends AppCompatActivity
 
     public void launchDBManager(View view) {
         startActivity(new Intent(this,AndroidDatabaseManager.class));
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        if(id==0) {
+            return new CursorLoader(mContext, TaskContract.TaskEntry.CONTENT_URI, null, null, null, null);
+        } else {
+            return new CursorLoader(mContext, TaskContract.CategoryEntry.CONTENT_URI, null, null, null, null);
+        }
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if (loader.getId() == 0) {
+            if (data.getCount()!=0) {
+                while (data.moveToNext()){
+                    String taskName = data.getString(data.getColumnIndex(TaskContract.TaskEntry.COLUMN_TASK_NAME));
+                    String encodedCategory = data.getString(data.getColumnIndex(TaskContract.TaskEntry.COLUMN_TASK_CATEGORY));
+                    String replace = encodedCategory.replace("[", "");
+                    String replace1 = replace.replace("]", "");
+                    ArrayList<String> taskCategory = new ArrayList<>(Arrays.asList(replace1.split(", ")));
+                    int priority = Integer.parseInt(data.getString(data.getColumnIndex(TaskContract.TaskEntry.COLUMN_PRIORITY)));
+                    Date date = data.getString(data.getColumnIndex(TaskContract.TaskEntry.COLUMN_DATE_ENTERED))
+                    Task task = new Task(taskName,taskCategory,priority);
+                    allTasks.add(task);
+                }
+            }
+
+        } else {
+            while (data.moveToNext()) {
+                allCategories.add(data.getString(data.getColumnIndex(TaskContract.CategoryEntry.COLUMN_CATEGORY)));
+
+            }
+
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }

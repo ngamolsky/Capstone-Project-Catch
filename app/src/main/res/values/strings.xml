@@ -10,11 +10,15 @@
     <string name="task">Task</string>
     <string name="balloon_description">Image representing an individual task</string>
     <string name="save">Save</string>
-    <string name="add_category">Add Category...</string>
+    <string name="add_category">Add Category</string>
     <string name="cancel">Cancel</string>
     <string name="title_activity_profile">ProfileActivity</string>
 
     <string name="add_category_hint">Input Your Category</string>
     <string name="ok">OK</string>
     <string name="title_activity_pick_category_dialog">PickCategoryDialog</string>
+    <string name="select_category">Select Category</string>
+    <string name="check_description">Validation Checkbox</string>
+    <string name="priority_title">Priority</string>
+    <string name="default_priority">0</string>
 </resources>
