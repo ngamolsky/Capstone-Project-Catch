@@ -9,6 +9,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -139,6 +140,9 @@ public class InputTaskActivity extends AppCompatActivity  implements LoaderManag
 
     }
 
+
+
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(mContext, TaskContract.CategoryEntry.CONTENT_URI, null, null, null, null);
@@ -182,6 +186,19 @@ public class InputTaskActivity extends AppCompatActivity  implements LoaderManag
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        return false;
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.add_task) {
+            startActivity(new Intent(getApplicationContext(), InputTaskActivity.class));
+        }
+
+        if (id == R.id.task_manager) {
+            startActivity(new Intent(getApplicationContext(),TaskManagerActivity.class));
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 }

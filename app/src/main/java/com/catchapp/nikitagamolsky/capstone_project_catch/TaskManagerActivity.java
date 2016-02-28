@@ -25,9 +25,12 @@ import com.catchapp.nikitagamolsky.capstone_project_catch.data.DividerItemDecora
 import com.catchapp.nikitagamolsky.capstone_project_catch.data.TaskAdapter;
 import com.catchapp.nikitagamolsky.capstone_project_catch.data.TaskContract;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Locale;
 
 public class TaskManagerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor>{
@@ -111,14 +114,18 @@ public class TaskManagerActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.add_task) {
+            startActivity(new Intent(getApplicationContext(), InputTaskActivity.class));
+        }
 
+        if (id == R.id.task_manager) {
+            startActivity(new Intent(getApplicationContext(),TaskManagerActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -144,15 +151,25 @@ public class TaskManagerActivity extends AppCompatActivity
         if (loader.getId() == 0) {
             if (data.getCount()!=0) {
                 while (data.moveToNext()){
+                    Date date = null;
                     String taskName = data.getString(data.getColumnIndex(TaskContract.TaskEntry.COLUMN_TASK_NAME));
                     String encodedCategory = data.getString(data.getColumnIndex(TaskContract.TaskEntry.COLUMN_TASK_CATEGORY));
                     String replace = encodedCategory.replace("[", "");
                     String replace1 = replace.replace("]", "");
                     ArrayList<String> taskCategory = new ArrayList<>(Arrays.asList(replace1.split(", ")));
                     int priority = Integer.parseInt(data.getString(data.getColumnIndex(TaskContract.TaskEntry.COLUMN_PRIORITY)));
-                    Date date = data.getString(data.getColumnIndex(TaskContract.TaskEntry.COLUMN_DATE_ENTERED))
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", new Locale("English"));
+                    String dateString = data.getString(data.getColumnIndex(TaskContract.TaskEntry.COLUMN_DATE_ENTERED));
+                    try {
+                        date = format.parse(dateString);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                     Task task = new Task(taskName,taskCategory,priority);
+                    task.setDateEntered(date);
                     allTasks.add(task);
+
+
                 }
             }
 
