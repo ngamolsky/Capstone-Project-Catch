@@ -24,6 +24,8 @@ import com.catchapp.nikitagamolsky.capstone_project_catch.data.CategoryAdapter;
 import com.catchapp.nikitagamolsky.capstone_project_catch.data.DividerItemDecoration;
 import com.catchapp.nikitagamolsky.capstone_project_catch.data.TaskAdapter;
 import com.catchapp.nikitagamolsky.capstone_project_catch.data.TaskContract;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -41,6 +43,7 @@ public class TaskManagerActivity extends AppCompatActivity
     private Context mContext;
     private ArrayList<String> allCategories;
     private ArrayList<Task> allTasks;
+    private Tracker mTracker;
 
 
     @Override
@@ -54,6 +57,10 @@ public class TaskManagerActivity extends AppCompatActivity
         getLoaderManager().initLoader(1, null, this);
         allCategories = new ArrayList<>();
         allTasks = new ArrayList<>();
+        //AdView mAdView = (AdView) findViewById(R.id.adView);
+        //AdRequest adRequest = new AdRequest.Builder().build();
+        //mAdView.loadAd(adRequest);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,6 +68,9 @@ public class TaskManagerActivity extends AppCompatActivity
                 startActivity(new Intent(getApplicationContext(), InputTaskActivity.class));
             }
         });
+
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        mTracker = application.getDefaultTracker();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -180,6 +190,12 @@ public class TaskManagerActivity extends AppCompatActivity
             }
 
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     @Override
