@@ -100,7 +100,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             builder.setView(R.layout.task_edit);
             AlertDialog dialog = builder.create();
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-            
+            dialog.show();
         }
     }
 
