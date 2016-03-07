@@ -69,6 +69,8 @@ public class TaskManagerActivity extends AppCompatActivity
             }
         });
 
+
+
         AnalyticsApplication application = (AnalyticsApplication) getApplication();
         mTracker = application.getDefaultTracker();
 
@@ -80,9 +82,7 @@ public class TaskManagerActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
         mRecyclerView = (RecyclerView) findViewById(R.id.taskList);
-
         mCategoryAdapter = new CategoryAdapter(null,mContext);
         mTaskAdapter = new TaskAdapter(mContext,allCategories,allTasks);
         mLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
@@ -178,15 +178,12 @@ public class TaskManagerActivity extends AppCompatActivity
                     Task task = new Task(taskName,taskCategory,priority);
                     task.setDateEntered(date);
                     allTasks.add(task);
-
-
                 }
             }
 
         } else {
             while (data.moveToNext()) {
                 allCategories.add(data.getString(data.getColumnIndex(TaskContract.CategoryEntry.COLUMN_CATEGORY)));
-
             }
 
         }
@@ -196,6 +193,7 @@ public class TaskManagerActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+
     }
 
     @Override

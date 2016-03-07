@@ -1,20 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <android.support.design.widget.FloatingActionButton
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:gravity="center">
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/deleteTask"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_clear_24dp"
         android:tint="@color/colorPrimaryDark"
-        android:backgroundTint="@color/White" />
-<android.support.design.widget.FloatingActionButton
-    android:layout_width="0dp"
-    android:layout_weight="1"
-    android:layout_height="wrap_content"
-    android:src="@drawable/ic_done_24dp"
-    android:tint="@color/colorAccent"
-    android:backgroundTint="@color/White"/>
+        app:backgroundTint="@color/White"
+       />
+        </LinearLayout>
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/positionEdit"
+        />
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:gravity="center">
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/confirmTask"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_done_24dp"
+        android:tint="@color/colorAccent"
+        app:backgroundTint="@color/White"/>
+        </LinearLayout>
 
 </LinearLayout>
