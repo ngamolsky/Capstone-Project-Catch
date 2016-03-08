@@ -24,4 +24,7 @@
     <string name="task_manager">Task Manager</string>
     <string name="no_task_in_category">No Task in this Category!</string>
     <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="no_categories">You don\'t have any categories yet!</string>
+    <string name="balloon_content_description">An Image containing a Balloon as a border for text</string>
+    <string name="empty_view">Empty Category View</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.catchapp.nikitagamolsky.capstone_project_catch;
+package com.catchapp.nikitagamolsky.capstone_project_catch.data;
 
 /*
  * Copyright Google Inc. All Rights Reserved.
@@ -18,6 +18,7 @@ package com.catchapp.nikitagamolsky.capstone_project_catch;
 
 import android.app.Application;
 
+import com.catchapp.nikitagamolsky.capstone_project_catch.R;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 

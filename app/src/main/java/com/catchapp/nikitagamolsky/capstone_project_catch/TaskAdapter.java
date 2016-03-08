@@ -1,12 +1,13 @@
-package com.catchapp.nikitagamolsky.capstone_project_catch.data;
+package com.catchapp.nikitagamolsky.capstone_project_catch;
 
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -15,12 +16,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.catchapp.nikitagamolsky.capstone_project_catch.R;
-import com.catchapp.nikitagamolsky.capstone_project_catch.Task;
+import com.catchapp.nikitagamolsky.capstone_project_catch.data.TaskContract;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -36,7 +35,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     private Context mContext;
     private ArrayList<String> mAllCategories;
     private Cursor mTaskCursor;
-    public String inputPosition = "0";
     private DataSetObserver mDataSetObserver;
     private boolean mDataValid;
 
@@ -65,86 +63,90 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         int topPriority = 0;
         int indexBestTask = -1;
+        mTaskCursor.moveToPosition(-1);
         String currentCategory = mAllCategories.get(position);
+        Log.v("CURRENTCATEGORY", currentCategory);
         holder.mCategoryLabel.setText(currentCategory);
-
-        while (mTaskCursor.moveToNext()) {
-            ArrayList<String> taskCategories = getTaskCategories(mTaskCursor,mTaskCursor.getPosition());
-            int currentPriority = Integer.parseInt(mTaskCursor.getString(mTaskCursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_PRIORITY)));
-            if(taskCategories.contains(currentCategory)){
-                if(currentPriority > topPriority){
-                    topPriority = currentPriority;
-                    indexBestTask = mTaskCursor.getPosition();
+        if (mDataValid) {
+            while (mTaskCursor.moveToNext()) {
+                ArrayList<String> taskCategories = getTaskCategories(mTaskCursor, mTaskCursor.getPosition());
+                Log.v("TASK CATEGORIES", taskCategories.toString());
+                int currentPriority = Integer.parseInt(mTaskCursor.getString(mTaskCursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_PRIORITY)));
+                if (taskCategories.contains(currentCategory)) {
+                    if (currentPriority > topPriority) {
+                        topPriority = currentPriority;
+                        indexBestTask = mTaskCursor.getPosition();
+                        Log.v("BEST TASK", mTaskCursor.getString(mTaskCursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_TASK_NAME)));
+                    }
                 }
             }
-        }
 
 
-        if (indexBestTask!=-1) {
-            mTaskCursor.moveToPosition(indexBestTask);
-            String taskTitle = mTaskCursor.getString(mTaskCursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_TASK_NAME));
-            ArrayList<String> taskCategories = getTaskCategories(mTaskCursor, indexBestTask);
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", new Locale("English"));
-            Date dateEntered = null;
-            int taskPriority = Integer.valueOf(mTaskCursor.getString(mTaskCursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_PRIORITY)));
-            try {
-                dateEntered = format.parse(mTaskCursor.getString(mTaskCursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_DATE_ENTERED)));
-            } catch (ParseException e) {
-                e.printStackTrace();
+
+
+            if (indexBestTask != -1) {
+                mTaskCursor.moveToPosition(indexBestTask);
+                String taskTitle = mTaskCursor.getString(mTaskCursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_TASK_NAME));
+                ArrayList<String> taskCategories = getTaskCategories(mTaskCursor, indexBestTask);
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", new Locale("English"));
+                Date dateEntered = null;
+                int taskPriority = Integer.valueOf(mTaskCursor.getString(mTaskCursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_PRIORITY)));
+                try {
+                    dateEntered = format.parse(mTaskCursor.getString(mTaskCursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_DATE_ENTERED)));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                final Task currentTask = new Task(taskTitle, taskCategories, taskPriority);
+                holder.currentTask = currentTask;
+                currentTask.setDateEntered(dateEntered);
+                currentTask.updatePosition();
+                holder.mTaskText.setText(currentTask.getTitle());
+                ObjectAnimator updatePosition = ObjectAnimator.ofFloat(holder.mTaskItem,"translationY",currentTask.getPosition());
+                updatePosition.setDuration(1000);
+                updatePosition.start();
+                updatePosition.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        ObjectAnimator floating = ObjectAnimator.ofFloat(holder.mTaskItem,"translationY",currentTask.getPosition(),currentTask.getPosition()+15);
+                        floating.setRepeatCount(Animation.INFINITE);
+                        floating.setRepeatMode(Animation.REVERSE);
+                        floating.setDuration(500);
+                        floating.setStartDelay(200*position);
+                        floating.start();
+
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+
+
+            } else {
+
+                holder.mTaskText.setText(R.string.no_task_in_category);
+                ObjectAnimator floating = ObjectAnimator.ofFloat(holder.mTaskItem,"translationY",15);
+                floating.setRepeatCount(Animation.INFINITE);
+                floating.setRepeatMode(Animation.REVERSE);
+                floating.setDuration(500);
+                floating.setStartDelay(200 * position);
+                floating.start();
+
             }
-            final Task currentTask = new Task(taskTitle,taskCategories,taskPriority);
-            holder.currentTask = currentTask;
-            currentTask.setDateEntered(dateEntered);
-            currentTask.updatePosition();
-            holder.mTaskText.setText(currentTask.getTitle());
-            Animation updatePosition = new TranslateAnimation(0, 0, 0, currentTask.getPosition());
-            updatePosition.setDuration(1000);
-            updatePosition.setFillAfter(true);
-            holder.mTaskItem.startAnimation(updatePosition);
-            updatePosition.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
 
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Animation floating = new TranslateAnimation(0,0,currentTask.getPosition(),(currentTask.getPosition()+35));
-                            floating.setRepeatCount(Animation.INFINITE);
-                            floating.setRepeatMode(Animation.REVERSE);
-                            floating.setDuration(500);
-                            holder.mTaskItem.startAnimation(floating);
-                        }
-                    }, 400 * position);
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-
-                }
-            });
-
-
-        } else {
-
-            holder.mTaskText.setText(R.string.no_task_in_category);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Animation floating = new TranslateAnimation(0, 0, 0, 35);
-                    floating.setRepeatCount(Animation.INFINITE);
-                    floating.setRepeatMode(Animation.REVERSE);
-                    floating.setDuration(500);
-                    holder.mTaskItem.startAnimation(floating);
-                }
-            }, 400 * position);
 
         }
-
-
 
     }
 
@@ -182,16 +184,17 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
         @Override
         public void onClick(View v) {
+            if(!mTaskText.getText().toString().equals(mContext.getString(R.string.no_task_in_category))){
             TaskDialog dialog = new TaskDialog(mContext,currentTask);
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-            dialog.show();
+            dialog.show();}
         }
 
 
         public class TaskDialog extends AlertDialog implements View.OnClickListener
         {
             public FloatingActionButton deleteFab;
-            public FloatingActionButton confirmFab;
+
 
             public Context mContext;
             public Task selectedTask;
@@ -206,11 +209,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             protected void onCreate(Bundle savedInstanceState) {
                 setContentView(R.layout.task_edit);
                 deleteFab = (FloatingActionButton)findViewById(R.id.deleteTask);
-                confirmFab = (FloatingActionButton)findViewById(R.id.confirmTask);
-
-
                 deleteFab.setOnClickListener(this);
-                confirmFab.setOnClickListener(this);
+
             }
 
             @Override
@@ -218,9 +218,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
                 String whereClause = TaskContract.TaskEntry.COLUMN_TASK_NAME+"=?";
                 String [] whereArgs = {mTaskText.getText().toString()};
                 mContext.getContentResolver().delete(TaskContract.TaskEntry.CONTENT_URI, whereClause, whereArgs);
-                Log.v("THING", "DELETED");
                 notifyDataSetChanged();
-               dismiss();
+                dismiss();
             }
         }
 

@@ -5,6 +5,7 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
+// A Custom TextView that scrolls when there is not enough room
 public class AutoScrollingTextView extends TextView {
     public AutoScrollingTextView(Context context, AttributeSet attrs,
                                  int defStyle) {

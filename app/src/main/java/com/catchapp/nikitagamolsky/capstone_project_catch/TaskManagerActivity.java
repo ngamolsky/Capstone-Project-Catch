@@ -1,5 +1,6 @@
 package com.catchapp.nikitagamolsky.capstone_project_catch;
 
+import android.animation.ObjectAnimator;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
@@ -16,13 +17,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.widget.FrameLayout;
 
-import com.catchapp.nikitagamolsky.capstone_project_catch.data.CategoryAdapter;
+import com.catchapp.nikitagamolsky.capstone_project_catch.data.AnalyticsApplication;
 import com.catchapp.nikitagamolsky.capstone_project_catch.data.DividerItemDecoration;
-import com.catchapp.nikitagamolsky.capstone_project_catch.data.TaskAdapter;
 import com.catchapp.nikitagamolsky.capstone_project_catch.data.TaskContract;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -38,6 +39,7 @@ public class TaskManagerActivity extends AppCompatActivity
     private Context mContext;
     private ArrayList<String> allCategories;
     private Tracker mTracker;
+    private FrameLayout emptyText;
 
 
     @Override
@@ -76,6 +78,7 @@ public class TaskManagerActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         mRecyclerView = (RecyclerView) findViewById(R.id.taskList);
+        emptyText = (FrameLayout) findViewById(R.id.emptyView);
         mCategoryAdapter = new CategoryAdapter(null,mContext);
         mTaskAdapter = new TaskAdapter(mContext,null,allCategories);
         mLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
@@ -95,27 +98,7 @@ public class TaskManagerActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.task_manager, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
 
     @Override
@@ -136,9 +119,7 @@ public class TaskManagerActivity extends AppCompatActivity
         return true;
     }
 
-    public void launchDBManager(View view) {
-        startActivity(new Intent(this,AndroidDatabaseManager.class));
-    }
+
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -154,16 +135,26 @@ public class TaskManagerActivity extends AppCompatActivity
         if (loader.getId() == 0) {
 
             mTaskAdapter.changeCursor(data);
-        } else {
+        } else { if (data.getCount()==0){
+            mRecyclerView.setVisibility(View.GONE);
+            emptyText.setVisibility(View.VISIBLE);
+            ObjectAnimator floating = ObjectAnimator.ofFloat(emptyText,"translationY",15);
+            floating.setRepeatCount(Animation.INFINITE);
+            floating.setRepeatMode(Animation.REVERSE);
+            floating.setDuration(500);
+            floating.start();
+
+
+        }
             while (data.moveToNext()) {
                 allCategories.add(data.getString(data.getColumnIndex(TaskContract.CategoryEntry.COLUMN_CATEGORY)));
             }
         }
+
     }
 
     @Override
     protected void onResume() {
-
         mTaskAdapter.notifyDataSetChanged();
         super.onResume();
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
@@ -172,6 +163,6 @@ public class TaskManagerActivity extends AppCompatActivity
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-mTaskAdapter.changeCursor(null);
+ mTaskAdapter.changeCursor(null);
     }
 }

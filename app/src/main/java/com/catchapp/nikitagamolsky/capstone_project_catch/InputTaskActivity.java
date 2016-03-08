@@ -9,6 +9,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -25,7 +26,6 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.catchapp.nikitagamolsky.capstone_project_catch.data.CategoryAdapter;
 import com.catchapp.nikitagamolsky.capstone_project_catch.data.TaskContract;
 import com.catchapp.nikitagamolsky.capstone_project_catch.data.WrappableGridLayoutManager;
 
@@ -78,6 +78,7 @@ public class InputTaskActivity extends AppCompatActivity  implements LoaderManag
 
 
 
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         mContext = this;
@@ -107,7 +108,7 @@ public class InputTaskActivity extends AppCompatActivity  implements LoaderManag
         taskTitle.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus) {
+                if (!hasFocus) {
                     ImageView check = (ImageView) findViewById(R.id.titleCheck);
                     check.setVisibility(View.VISIBLE);
                     inputTitle = taskTitle.getText().toString();
@@ -116,15 +117,18 @@ public class InputTaskActivity extends AppCompatActivity  implements LoaderManag
         });
 
         RecyclerView categoryList = (RecyclerView) findViewById(R.id.categoryList);
-        WrappableGridLayoutManager mLayoutManager = new WrappableGridLayoutManager(mContext,4);
+        WrappableGridLayoutManager mLayoutManager = new WrappableGridLayoutManager(mContext,3);
         categoryList.setLayoutManager(mLayoutManager);
         categoryList.setAdapter(mCategoryAdapter);
+        final TextView priorityView = (TextView) findViewById(R.id.priorityView);
+        priorityView.setText("0");
         final SeekBar priorityBar = (SeekBar)findViewById(R.id.priorityBar);
         priorityBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                priorityView.setText(""+progress);
             }
 
             @Override
@@ -164,8 +168,15 @@ public class InputTaskActivity extends AppCompatActivity  implements LoaderManag
     public void saveTask(View v){
         inputTitle = taskTitle.getText().toString();
         Task inputTask = new Task(inputTitle, inputCategories, priority);
+        if(inputTitle.isEmpty() || inputCategories.isEmpty()){
+            final View coordinatorLayoutView = findViewById(R.id.snackbarPosition);
+
+            Snackbar
+                    .make(coordinatorLayoutView, "Either Title, or Categories are empty!", Snackbar.LENGTH_LONG)
+                    .show();
+        } else{
         inputTask.save(mContext);
-        startActivity(new Intent(this,TaskManagerActivity.class));
+        startActivity(new Intent(this,TaskManagerActivity.class));}
     }
 
     public void addCategory(String category){

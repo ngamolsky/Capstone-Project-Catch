@@ -29,6 +29,35 @@
         />
 
 
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/emptyView"
+        android:visibility="gone"
+        android:layout_gravity="center">
 
+        <ImageView
+            android:contentDescription="@string/empty_view"
+            android:layout_width="300dp"
+            android:layout_height="360dp"
+            android:scaleType="center"
+            android:src="@drawable/ic_nikita_balloon_shortstring_45dp"
+            android:paddingTop="100dp"
+            android:scaleY="1.5"
+            android:scaleX="1.5"
+            />
+
+        <TextView
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/taskText"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:textSize="18sp"
+            android:paddingBottom="75dp"
+            android:text="@string/no_categories"
+            />
+
+    </FrameLayout>
 
 </LinearLayout>

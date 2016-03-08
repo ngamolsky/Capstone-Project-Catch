@@ -26,10 +26,11 @@
 
 <FrameLayout
     android:layout_width="150dp"
-    android:layout_height="wrap_content"
+    android:layout_height="180dp"
     android:id="@+id/taskItem">
 
     <ImageView
+        android:contentDescription="@string/balloon_content_description"
         android:layout_width="150dp"
         android:layout_height="180dp"
         android:scaleType="center"
@@ -37,7 +38,7 @@
         android:paddingTop="100dp"/>
 
 <TextView
-    android:layout_width="60dp"
+    android:layout_width="80dp"
     android:layout_height="wrap_content"
     android:id="@+id/taskText"
     android:gravity="center"

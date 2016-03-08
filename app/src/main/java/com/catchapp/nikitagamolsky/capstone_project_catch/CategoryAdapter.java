@@ -1,6 +1,7 @@
-package com.catchapp.nikitagamolsky.capstone_project_catch.data;
+package com.catchapp.nikitagamolsky.capstone_project_catch;
 
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.DataSetObserver;
@@ -11,12 +12,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.catchapp.nikitagamolsky.capstone_project_catch.InputTaskActivity;
-import com.catchapp.nikitagamolsky.capstone_project_catch.R;
+import com.catchapp.nikitagamolsky.capstone_project_catch.data.TaskContract;
 
+// The Adapter responsible for loading Categories into the Input Task Activity
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder> {
     private Cursor mCategoryCursor;
     private boolean mDataValid;
@@ -40,24 +43,37 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_list_item, parent, false);
-        ViewHolder vh = new ViewHolder(v);
-        return vh;
+        return new ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         if (mDataValid) {
+            mCategoryCursor.moveToFirst();
+
+            //Load All Categories
             if(position<mCategoryCursor.getCount()) {
                 mCategoryCursor.moveToPosition(position);
                 String currentCategory = mCategoryCursor.getString(mCategoryCursor.getColumnIndex(TaskContract.CategoryEntry.COLUMN_CATEGORY));
                 holder.mCategoryText.setText(currentCategory);
+
+            //Add Extra Item for Adding Categories
             } else {
                 holder.mCategoryText.setText(R.string.add_category);
 
             }
+
+            //Floating Category Balloons Animation, with staggered start delays
+            ObjectAnimator floating = ObjectAnimator.ofFloat(holder.mCategoryLayout, "translationY",0, 15);
+            floating.setRepeatCount(Animation.INFINITE);
+            floating.setRepeatMode(Animation.REVERSE);
+            floating.setDuration(500);
+            floating.setStartDelay(position*200);
+            floating.start();
         }
     }
 
+    //Modified to allow for the "Add Category" slot
     @Override
     public int getItemCount() {
         if (mCategoryCursor != null) {
@@ -67,38 +83,41 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         }
     }
 
+
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView mCategoryText;
         public FrameLayout mCategoryLayout;
+        public ImageView mBalloonView;
         public boolean selected;
 
         public ViewHolder(View itemView) {
             super(itemView);
             mCategoryText = (TextView) itemView.findViewById(R.id.categoryText);
             mCategoryLayout = (FrameLayout) itemView.findViewById(R.id.categoryLayout);
+            mBalloonView = (ImageView)itemView.findViewById(R.id.balloonImage);
             mCategoryLayout.setOnClickListener(this);
             selected = false;
         }
 
-
+        // Provides interface for adding categories to Task
         @Override
         public void onClick(View v) {
         if(!selected){
-            if(!mCategoryText.getText().toString().equals("Add Category")) {
+            if(!mCategoryText.getText().toString().equals("Add Category")) {// If item represents actual category
                 selected = true;
-                mCategoryLayout.setBackgroundResource(R.drawable.rounded_corners_selected);
+                mBalloonView.setImageResource(R.drawable.ic_nikita_balloon_no_string_accent);
                 mCategoryText.setTextColor(Color.WHITE);
-                ((InputTaskActivity) mContext).addCategory(mCategoryText.getText().toString());
+                ((InputTaskActivity) mContext).addCategory(mCategoryText.getText().toString()); // Adds Category to Task
 
             } else{
-                mCategoryLayout.setBackgroundResource(R.drawable.rounded_corners_selected);
+                mBalloonView.setImageResource(R.drawable.ic_nikita_balloon_no_string_accent);
                 mCategoryText.setTextColor(Color.WHITE);
 
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mCategoryLayout.setBackgroundResource(R.drawable.rounded_corners);
+                        mBalloonView.setImageResource(R.drawable.ic_nikita_balloon_no_string_black);
                         mCategoryText.setTextColor(Color.BLACK);
                     }
                 }, 300);
@@ -107,12 +126,10 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
                 ((InputTaskActivity) mContext).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
         } else{
-            if(!mCategoryText.getText().toString().equals("Add Category")) {
                 selected = false;
-                mCategoryLayout.setBackgroundResource(R.drawable.rounded_corners);
+                mBalloonView.setImageResource(R.drawable.ic_nikita_balloon_no_string_black);
                 mCategoryText.setTextColor(Color.BLACK);
-                ((InputTaskActivity) mContext).removeCategory(mCategoryText.getText().toString());
-            }
+                ((InputTaskActivity) mContext).removeCategory(mCategoryText.getText().toString()); //Removes Category
         }
         }
     }
@@ -162,7 +179,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
             notifyDataSetChanged();
             //There is no notifyDataSetInvalidated() method in RecyclerView.Adapter
         }
-
 
     }
 
