@@ -6,10 +6,7 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.DataSetObserver;
-import android.graphics.drawable.ColorDrawable;
-import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -55,28 +52,25 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.task_item, parent, false);
-        ViewHolder vh = new ViewHolder(v);
-        return vh;
+        return new ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         int topPriority = 0;
         int indexBestTask = -1;
-        mTaskCursor.moveToPosition(-1);
+
         String currentCategory = mAllCategories.get(position);
-        Log.v("CURRENTCATEGORY", currentCategory);
         holder.mCategoryLabel.setText(currentCategory);
         if (mDataValid) {
+            mTaskCursor.moveToPosition(-1);
             while (mTaskCursor.moveToNext()) {
                 ArrayList<String> taskCategories = getTaskCategories(mTaskCursor, mTaskCursor.getPosition());
-                Log.v("TASK CATEGORIES", taskCategories.toString());
                 int currentPriority = Integer.parseInt(mTaskCursor.getString(mTaskCursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_PRIORITY)));
                 if (taskCategories.contains(currentCategory)) {
                     if (currentPriority > topPriority) {
                         topPriority = currentPriority;
                         indexBestTask = mTaskCursor.getPosition();
-                        Log.v("BEST TASK", mTaskCursor.getString(mTaskCursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_TASK_NAME)));
                     }
                 }
             }
@@ -134,7 +128,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
 
             } else {
-
+                Log.v("NO","TASK");
+                holder.currentTask = new Task("No Task", null,0);
+                holder.currentTask.setPosition(0);
                 holder.mTaskText.setText(R.string.no_task_in_category);
                 ObjectAnimator floating = ObjectAnimator.ofFloat(holder.mTaskItem,"translationY",0,15);
                 floating.setRepeatCount(Animation.INFINITE);
@@ -177,51 +173,30 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             mTaskText = (TextView) itemView.findViewById(R.id.taskText);
             mCategoryLabel = (TextView) itemView.findViewById(R.id.categoryLabel);
             mTaskItem = (FrameLayout) itemView.findViewById(R.id.taskItem);
-            deleteFab = (FloatingActionButton) itemView.findViewById(R.id.deleteTask);
+            deleteFab = (FloatingActionButton) itemView.findViewById(R.id.deleteFab);
             mTaskItem.setOnClickListener(this);
         }
 
 
         @Override
         public void onClick(View v) {
-            if(!mTaskText.getText().toString().equals(mContext.getString(R.string.no_task_in_category))){
-            TaskDialog dialog = new TaskDialog(mContext,currentTask);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-            dialog.show();}
-        }
-
-
-        public class TaskDialog extends AlertDialog implements View.OnClickListener
-        {
-            public FloatingActionButton deleteFab;
-
-
-            public Context mContext;
-            public Task selectedTask;
-
-            public TaskDialog(Context context, Task currentTask) {
-                super(context);
-                mContext = context;
-                selectedTask = currentTask;
-            }
-
-            @Override
-            protected void onCreate(Bundle savedInstanceState) {
-                setContentView(R.layout.task_edit);
-                deleteFab = (FloatingActionButton)findViewById(R.id.deleteTask);
-                deleteFab.setOnClickListener(this);
-
-            }
-
-            @Override
-            public void onClick(View v) {
-                String whereClause = TaskContract.TaskEntry.COLUMN_TASK_NAME+"=?";
-                String [] whereArgs = {mTaskText.getText().toString()};
-                mContext.getContentResolver().delete(TaskContract.TaskEntry.CONTENT_URI, whereClause, whereArgs);
-                notifyDataSetChanged();
-                dismiss();
+            if(!mTaskText.getText().toString().equals(mContext.getString(R.string.no_task_in_category))) {
+                deleteFab.setVisibility(View.VISIBLE);
+                deleteFab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String whereClause = TaskContract.TaskEntry.COLUMN_TASK_NAME+"=?";
+                        String [] whereArgs = {mTaskText.getText().toString()};
+                        mContext.getContentResolver().delete(TaskContract.TaskEntry.CONTENT_URI, whereClause, whereArgs);
+                        deleteFab.setVisibility(View.GONE);
+                        notifyDataSetChanged();
+                    }
+                });
             }
         }
+
+
+
 
     }
 

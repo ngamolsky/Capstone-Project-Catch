@@ -62,6 +62,7 @@ public class InputTaskActivity extends AppCompatActivity  implements LoaderManag
                 if (actionId == EditorInfo.IME_ACTION_SEND) {
                     handled = true;
                     inputCategory = editCategory.getText().toString();
+                    if (!inputCategory.isEmpty()){
                     InputMethodManager imm = (InputMethodManager) getSystemService(
                             INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
@@ -70,7 +71,14 @@ public class InputTaskActivity extends AppCompatActivity  implements LoaderManag
                     getContentResolver().insert(TaskContract.CategoryEntry.CONTENT_URI, values);
                     editCategory.setVisibility(View.GONE);
                     editCategory.setText("");
-                    mCategoryAdapter.notifyDataSetChanged();
+                    mCategoryAdapter.notifyDataSetChanged();}
+                    else{
+                        final View coordinatorLayoutView = findViewById(R.id.snackbarPosition);
+
+                        Snackbar
+                                .make(coordinatorLayoutView, "Please Enter a Cateogory", Snackbar.LENGTH_LONG)
+                                .show();
+                    }
                 }
                 return handled;
             }
@@ -172,7 +180,7 @@ public class InputTaskActivity extends AppCompatActivity  implements LoaderManag
             final View coordinatorLayoutView = findViewById(R.id.snackbarPosition);
 
             Snackbar
-                    .make(coordinatorLayoutView, "Either Title, or Categories are empty!", Snackbar.LENGTH_LONG)
+                    .make(coordinatorLayoutView, "Either Title or Categories are empty!", Snackbar.LENGTH_LONG)
                     .show();
         } else{
         inputTask.save(mContext);

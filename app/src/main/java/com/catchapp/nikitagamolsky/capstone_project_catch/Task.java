@@ -35,6 +35,10 @@ public class Task  {
         return position;
     }
 
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
 
     public void setDateEntered(Date dateEntered) {
         this.dateEntered = dateEntered;

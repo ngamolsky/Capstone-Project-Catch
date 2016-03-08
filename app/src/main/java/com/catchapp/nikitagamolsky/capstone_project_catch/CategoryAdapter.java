@@ -70,10 +70,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
             floating.setRepeatCount(Animation.INFINITE);
             floating.setRepeatMode(Animation.REVERSE);
             floating.setDuration(500);
-            long x = 0;
-            long y = 5;
             Random r = new Random();
-            long number = x+((long)(r.nextDouble()*(y-x)));
+            long number = ((long)(r.nextDouble()*(8)));
             floating.setStartDelay(number*200);
             floating.start();
         }
