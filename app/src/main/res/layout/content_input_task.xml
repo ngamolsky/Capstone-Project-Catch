@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/inputTask"
                 android:hint="@string/task"
-                android:inputType="text"
+                android:inputType="textCapWords"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display1"
                 android:layout_marginTop="60dp"
                 android:imeOptions="actionSend"/>
@@ -69,18 +69,18 @@
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginTop="10dp"
-        android:layout_below="@+id/categoryList">
+        android:layout_below="@+id/categoryList"
+        >
     <EditText
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:id="@+id/editCategory"
         android:visibility="gone"
-        android:inputType="text"
+        android:inputType="textCapWords"
         android:hint="@string/add_category_hint"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="?android:textColorHint"
         android:imeOptions="actionSend"
-
        />
 
 </android.support.design.widget.TextInputLayout>

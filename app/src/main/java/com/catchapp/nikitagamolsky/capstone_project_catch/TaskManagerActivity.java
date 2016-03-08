@@ -27,12 +27,7 @@ import com.catchapp.nikitagamolsky.capstone_project_catch.data.TaskContract;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Locale;
 
 public class TaskManagerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor>{
@@ -42,7 +37,6 @@ public class TaskManagerActivity extends AppCompatActivity
     private RecyclerView.LayoutManager mLayoutManager;
     private Context mContext;
     private ArrayList<String> allCategories;
-    private ArrayList<Task> allTasks;
     private Tracker mTracker;
 
 
@@ -56,7 +50,6 @@ public class TaskManagerActivity extends AppCompatActivity
         getLoaderManager().initLoader(0,null,this);
         getLoaderManager().initLoader(1, null, this);
         allCategories = new ArrayList<>();
-        allTasks = new ArrayList<>();
         //AdView mAdView = (AdView) findViewById(R.id.adView);
         //AdRequest adRequest = new AdRequest.Builder().build();
         //mAdView.loadAd(adRequest);
@@ -84,7 +77,7 @@ public class TaskManagerActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         mRecyclerView = (RecyclerView) findViewById(R.id.taskList);
         mCategoryAdapter = new CategoryAdapter(null,mContext);
-        mTaskAdapter = new TaskAdapter(mContext,allCategories,allTasks);
+        mTaskAdapter = new TaskAdapter(mContext,null,allCategories);
         mLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mContext,DividerItemDecoration.HORIZONTAL_LIST));
@@ -159,38 +152,19 @@ public class TaskManagerActivity extends AppCompatActivity
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (loader.getId() == 0) {
-            if (data.getCount()!=0) {
-                while (data.moveToNext()){
-                    Date date = null;
-                    String taskName = data.getString(data.getColumnIndex(TaskContract.TaskEntry.COLUMN_TASK_NAME));
-                    String encodedCategory = data.getString(data.getColumnIndex(TaskContract.TaskEntry.COLUMN_TASK_CATEGORY));
-                    String replace = encodedCategory.replace("[", "");
-                    String replace1 = replace.replace("]", "");
-                    ArrayList<String> taskCategory = new ArrayList<>(Arrays.asList(replace1.split(", ")));
-                    int priority = Integer.parseInt(data.getString(data.getColumnIndex(TaskContract.TaskEntry.COLUMN_PRIORITY)));
-                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", new Locale("English"));
-                    String dateString = data.getString(data.getColumnIndex(TaskContract.TaskEntry.COLUMN_DATE_ENTERED));
-                    try {
-                        date = format.parse(dateString);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    Task task = new Task(taskName,taskCategory,priority);
-                    task.setDateEntered(date);
-                    allTasks.add(task);
-                }
-            }
 
+            mTaskAdapter.changeCursor(data);
         } else {
             while (data.moveToNext()) {
                 allCategories.add(data.getString(data.getColumnIndex(TaskContract.CategoryEntry.COLUMN_CATEGORY)));
             }
-
         }
     }
 
     @Override
     protected void onResume() {
+
+        mTaskAdapter.notifyDataSetChanged();
         super.onResume();
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
@@ -198,6 +172,6 @@ public class TaskManagerActivity extends AppCompatActivity
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-
+mTaskAdapter.changeCursor(null);
     }
 }

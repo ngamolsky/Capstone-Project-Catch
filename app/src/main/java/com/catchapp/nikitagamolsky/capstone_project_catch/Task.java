@@ -87,9 +87,11 @@ public class Task  {
         return title;
     }
 
-    public void updatePosition(Context context){
+    public void updatePosition(){
         Date currentDate = new Date();
         position = (priority*960*(currentDate.getTime()-dateEntered.getTime()))/(1000*60*60*24*10);
         Log.v("NEWPOSITION", "" + position);
     }
+
+
 }

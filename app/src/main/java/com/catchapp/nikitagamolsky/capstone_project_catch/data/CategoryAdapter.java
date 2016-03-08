@@ -11,7 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.catchapp.nikitagamolsky.capstone_project_catch.InputTaskActivity;
@@ -69,13 +69,13 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView mCategoryText;
-        public LinearLayout mCategoryLayout;
+        public FrameLayout mCategoryLayout;
         public boolean selected;
 
         public ViewHolder(View itemView) {
             super(itemView);
             mCategoryText = (TextView) itemView.findViewById(R.id.categoryText);
-            mCategoryLayout = (LinearLayout) itemView.findViewById(R.id.categoryLayout);
+            mCategoryLayout = (FrameLayout) itemView.findViewById(R.id.categoryLayout);
             mCategoryLayout.setOnClickListener(this);
             selected = false;
         }
