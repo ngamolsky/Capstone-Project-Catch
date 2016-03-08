@@ -52,7 +52,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     public void onBindViewHolder(final ViewHolder holder, int position) {
         if (mDataValid) {
             mCategoryCursor.moveToFirst();
-
+            holder.mBalloonView.setImageResource(R.drawable.ic_nikita_balloon_no_string_black);
+            holder.mCategoryText.setTextColor(Color.BLACK);
             //Load All Categories
             if(position<mCategoryCursor.getCount()) {
                 mCategoryCursor.moveToPosition(position);
