@@ -25,6 +25,8 @@ import android.widget.FrameLayout;
 import com.catchapp.nikitagamolsky.capstone_project_catch.data.AnalyticsApplication;
 import com.catchapp.nikitagamolsky.capstone_project_catch.data.DividerItemDecoration;
 import com.catchapp.nikitagamolsky.capstone_project_catch.data.TaskContract;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -34,8 +36,6 @@ public class TaskManagerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor>{
     private RecyclerView mRecyclerView;
     private TaskAdapter mTaskAdapter;
-    private CategoryAdapter mCategoryAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
     private Context mContext;
     private ArrayList<String> allCategories;
     private Tracker mTracker;
@@ -49,12 +49,12 @@ public class TaskManagerActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mContext = this;
-        getLoaderManager().initLoader(0,null,this);
+        getLoaderManager().initLoader(0, null, this);
         getLoaderManager().initLoader(1, null, this);
         allCategories = new ArrayList<>();
-        //AdView mAdView = (AdView) findViewById(R.id.adView);
-        //AdRequest adRequest = new AdRequest.Builder().build();
-        //mAdView.loadAd(adRequest);
+        AdView mAdView = (AdView) findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -79,9 +79,8 @@ public class TaskManagerActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         mRecyclerView = (RecyclerView) findViewById(R.id.taskList);
         emptyText = (FrameLayout) findViewById(R.id.emptyView);
-        mCategoryAdapter = new CategoryAdapter(null,mContext);
         mTaskAdapter = new TaskAdapter(mContext,null,allCategories);
-        mLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mContext,DividerItemDecoration.HORIZONTAL_LIST));
         mRecyclerView.setAdapter(mTaskAdapter);

@@ -19,6 +19,8 @@ import android.widget.TextView;
 
 import com.catchapp.nikitagamolsky.capstone_project_catch.data.TaskContract;
 
+import java.util.Random;
+
 // The Adapter responsible for loading Categories into the Input Task Activity
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder> {
     private Cursor mCategoryCursor;
@@ -64,11 +66,15 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
             }
 
             //Floating Category Balloons Animation, with staggered start delays
-            ObjectAnimator floating = ObjectAnimator.ofFloat(holder.mCategoryLayout, "translationY",0, 15);
+            ObjectAnimator floating = ObjectAnimator.ofFloat(holder.mCategoryLayout, "translationY", 0, 15);
             floating.setRepeatCount(Animation.INFINITE);
             floating.setRepeatMode(Animation.REVERSE);
             floating.setDuration(500);
-            floating.setStartDelay(position*200);
+            long x = 0;
+            long y = 5;
+            Random r = new Random();
+            long number = x+((long)(r.nextDouble()*(y-x)));
+            floating.setStartDelay(number*200);
             floating.start();
         }
     }
@@ -84,7 +90,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public TextView mCategoryText;
         public FrameLayout mCategoryLayout;
         public ImageView mBalloonView;
@@ -96,6 +102,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
             mCategoryLayout = (FrameLayout) itemView.findViewById(R.id.categoryLayout);
             mBalloonView = (ImageView)itemView.findViewById(R.id.balloonImage);
             mCategoryLayout.setOnClickListener(this);
+            mCategoryLayout.setOnLongClickListener(this);
             selected = false;
         }
 
@@ -131,6 +138,24 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
                 mCategoryText.setTextColor(Color.BLACK);
                 ((InputTaskActivity) mContext).removeCategory(mCategoryText.getText().toString()); //Removes Category
         }
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+
+            final String whereClause = TaskContract.CategoryEntry.COLUMN_CATEGORY+"=?";
+            final String [] whereArgs = {mCategoryText.getText().toString()};
+            mBalloonView.setImageResource(R.drawable.ic_balloon_pop);
+            mCategoryText.setText("");
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mContext.getContentResolver().delete(TaskContract.CategoryEntry.CONTENT_URI,whereClause,whereArgs);
+                    notifyDataSetChanged();
+                }
+            }, 300);
+            return true;
         }
     }
 

@@ -136,7 +136,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             } else {
 
                 holder.mTaskText.setText(R.string.no_task_in_category);
-                ObjectAnimator floating = ObjectAnimator.ofFloat(holder.mTaskItem,"translationY",15);
+                ObjectAnimator floating = ObjectAnimator.ofFloat(holder.mTaskItem,"translationY",0,15);
                 floating.setRepeatCount(Animation.INFINITE);
                 floating.setRepeatMode(Animation.REVERSE);
                 floating.setDuration(500);

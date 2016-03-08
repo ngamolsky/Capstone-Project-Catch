@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         ads:adSize="SMART_BANNER"
         ads:adUnitId="@string/banner_ad_unit_id"
-        android:visibility="gone">
+        android:visibility="visible">
     </com.google.android.gms.ads.AdView>
 
     <android.support.v7.widget.RecyclerView
