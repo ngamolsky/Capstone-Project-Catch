@@ -27,4 +27,5 @@
     <string name="no_categories">You don\'t have any categories yet!</string>
     <string name="balloon_content_description">An Image containing a Balloon as a border for text</string>
     <string name="empty_view">Empty Category View</string>
+    <string name="popped_balloon_description">This is the image that pops up when a balloon sinks below the screen</string>
 </resources>

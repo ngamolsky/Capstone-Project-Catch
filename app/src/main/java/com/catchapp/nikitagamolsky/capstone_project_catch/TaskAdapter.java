@@ -3,17 +3,26 @@ package com.catchapp.nikitagamolsky.capstone_project_catch;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.DataSetObserver;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.TaskStackBuilder;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.catchapp.nikitagamolsky.capstone_project_catch.data.TaskContract;
@@ -59,7 +68,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         int topPriority = 0;
         int indexBestTask = -1;
-
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE))
+                .getDefaultDisplay().getMetrics(displaymetrics);
+        int height = displaymetrics.heightPixels;
+        final float density = displaymetrics.density;
+        final float ydpi = height/density;
         String currentCategory = mAllCategories.get(position);
         holder.mCategoryLabel.setText(currentCategory);
         if (mDataValid) {
@@ -95,7 +109,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
                 currentTask.setDateEntered(dateEntered);
                 currentTask.updatePosition();
                 holder.mTaskText.setText(currentTask.getTitle());
-                ObjectAnimator updatePosition = ObjectAnimator.ofFloat(holder.mTaskItem,"translationY",currentTask.getPosition());
+                ObjectAnimator updatePosition = ObjectAnimator.ofFloat(holder.mTaskItem,"translationY",currentTask.getPosition()*density);
                 updatePosition.setDuration(1000);
                 updatePosition.start();
                 updatePosition.addListener(new Animator.AnimatorListener() {
@@ -106,12 +120,26 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        ObjectAnimator floating = ObjectAnimator.ofFloat(holder.mTaskItem,"translationY",currentTask.getPosition(),currentTask.getPosition()+15);
+                        ObjectAnimator floating = ObjectAnimator.ofFloat(holder.mTaskItem, "translationY", currentTask.getPosition()*density, currentTask.getPosition()*density + 15);
                         floating.setRepeatCount(Animation.INFINITE);
                         floating.setRepeatMode(Animation.REVERSE);
                         floating.setDuration(500);
-                        floating.setStartDelay(200*position);
+                        floating.setStartDelay(200 * position);
                         floating.start();
+
+                        if(holder.currentTask.getPosition()>(ydpi-200)){
+                            holder.poppedBalloon.setVisibility(View.VISIBLE);
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    holder.poppedBalloon.setVisibility(View.GONE);
+                                    String whereClause = TaskContract.TaskEntry.COLUMN_TASK_NAME+"=?";
+                                    String [] whereArgs = {holder.currentTask.getTitle()};
+                                    mContext.getContentResolver().delete(TaskContract.TaskEntry.CONTENT_URI, whereClause, whereArgs);
+                                }
+                            }, 1000);
+                        }
 
                     }
 
@@ -127,8 +155,32 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
                 });
 
 
+                Log.v("HEIGHT", holder.currentTask.getPosition()+"");
+                if(holder.currentTask.getPosition()>(ydpi-280)){
+                    android.support.v4.app.NotificationCompat.Builder mBuilder =
+                            new NotificationCompat.Builder(mContext)
+                                    .setSmallIcon(R.drawable.ic_nikita_balloon_no_string_accent)
+                                    .setContentTitle(holder.currentTask.getTitle())
+                                    .setContentText("This Task is About to Expire!!");
+                    Intent resultIntent = new Intent(mContext, TaskManagerActivity.class);
+                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
+                    stackBuilder.addParentStack(TaskManagerActivity.class);
+                    stackBuilder.addNextIntent(resultIntent);
+                    PendingIntent resultPendingIntent =
+                            stackBuilder.getPendingIntent(
+                                    0,
+                                    PendingIntent.FLAG_UPDATE_CURRENT
+                            );
+                    mBuilder.setContentIntent(resultPendingIntent);
+                    NotificationManager mNotificationManager =
+                            (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+                    mNotificationManager.notify(0, mBuilder.build());
+                }
+
+
+
+
             } else {
-                Log.v("NO","TASK");
                 holder.currentTask = new Task("No Task", null,0);
                 holder.currentTask.setPosition(0);
                 holder.mTaskText.setText(R.string.no_task_in_category);
@@ -163,11 +215,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         public TextView mCategoryLabel;
         public FloatingActionButton deleteFab;
         public Task currentTask;
-
-
-
-
-
+        public ImageView poppedBalloon;
         public ViewHolder(View itemView) {
             super(itemView);
             mTaskText = (TextView) itemView.findViewById(R.id.taskText);
@@ -175,6 +223,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             mTaskItem = (FrameLayout) itemView.findViewById(R.id.taskItem);
             deleteFab = (FloatingActionButton) itemView.findViewById(R.id.deleteFab);
             mTaskItem.setOnClickListener(this);
+            poppedBalloon = (ImageView)itemView.findViewById(R.id.poppedBalloon);
         }
 
 

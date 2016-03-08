@@ -24,6 +24,7 @@
     android:paddingStart="4dp"
     />
 
+
 <FrameLayout
     android:layout_width="150dp"
     android:layout_height="280dp"
@@ -58,5 +59,15 @@
 
 </FrameLayout>
 
+    <ImageView
+        android:contentDescription="@string/popped_balloon_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/poppedBalloon"
+        android:src="@drawable/ic_balloon_pop"
+        android:visibility="gone"
+        android:layout_gravity="center_horizontal|bottom"
+        android:tint="@color/colorPrimary"
+        />
 
 </LinearLayout>
