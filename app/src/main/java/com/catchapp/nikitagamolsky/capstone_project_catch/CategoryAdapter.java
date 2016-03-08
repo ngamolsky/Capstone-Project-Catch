@@ -151,6 +151,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
                 @Override
                 public void run() {
                     mContext.getContentResolver().delete(TaskContract.CategoryEntry.CONTENT_URI,whereClause,whereArgs);
+                    mBalloonView.setImageResource(R.drawable.ic_nikita_balloon_no_string_black);
                     notifyDataSetChanged();
                 }
             }, 300);
