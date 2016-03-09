@@ -12,6 +12,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:name=".data.AnalyticsApplication">
+
+        <receiver android:name="MyAppWidgetProvider" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/appwidget_info" />
+        </receiver>
         <activity
             android:name=".TaskManagerActivity"
             android:label="@string/app_name"

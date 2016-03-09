@@ -30,6 +30,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:tint="@color/White"
-        android:src="@drawable/ic_add_24dp" />
+        android:src="@drawable/ic_add_24dp"
+        android:contentDescription="@string/add_task_fab"/>
 
 </android.support.design.widget.CoordinatorLayout>

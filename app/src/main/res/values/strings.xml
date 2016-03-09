@@ -28,4 +28,7 @@
     <string name="balloon_content_description">An Image containing a Balloon as a border for text</string>
     <string name="empty_view">Empty Category View</string>
     <string name="popped_balloon_description">This is the image that pops up when a balloon sinks below the screen</string>
+    <string name="save_fab">Save Task Button</string>
+    <string name="delete_fab">Delete Button</string>
+    <string name="add_task_fab">Add Task Button</string>
 </resources>

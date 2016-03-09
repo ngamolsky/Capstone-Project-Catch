@@ -32,6 +32,7 @@
         android:src="@drawable/ic_done_24dp"
         android:onClick="saveTask"
         android:tint="@color/White"
+        android:contentDescription="@string/save_fab"
         />
 
 </android.support.design.widget.CoordinatorLayout>

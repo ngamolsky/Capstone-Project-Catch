@@ -43,6 +43,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     private Cursor mTaskCursor;
     private DataSetObserver mDataSetObserver;
     private boolean mDataValid;
+    private String mImportantTaskTitle;
+    private int mHighestPriorityIndex;
 
 
     public TaskAdapter (Context context, Cursor taskCursor,ArrayList<String> allCategories) {
@@ -68,6 +70,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         int topPriority = 0;
         int indexBestTask = -1;
+
         DisplayMetrics displaymetrics = new DisplayMetrics();
         ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE))
                 .getDefaultDisplay().getMetrics(displaymetrics);
@@ -79,6 +82,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         if (mDataValid) {
             mTaskCursor.moveToPosition(-1);
             while (mTaskCursor.moveToNext()) {
+                if (Integer.parseInt(mTaskCursor.getString(mTaskCursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_PRIORITY)))>mHighestPriorityIndex){
+                    mHighestPriorityIndex = Integer.parseInt(mTaskCursor.getString(mTaskCursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_PRIORITY)));
+                }
                 ArrayList<String> taskCategories = getTaskCategories(mTaskCursor, mTaskCursor.getPosition());
                 int currentPriority = Integer.parseInt(mTaskCursor.getString(mTaskCursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_PRIORITY)));
                 if (taskCategories.contains(currentCategory)) {
@@ -305,5 +311,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         String replace1 = replace.replace("]", "");
         return new ArrayList<>(Arrays.asList(replace1.split(", ")));
     }
+
 
 }
